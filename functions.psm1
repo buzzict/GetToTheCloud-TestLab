@@ -151,7 +151,7 @@ function New-TestLabNSG {
             -DestinationAddressPrefix * `
             -DestinationPortRange 25
 
-            $rule1 = New-AzNetworkSecurityRuleConfig -Name 'WinRM HTTP' `
+            $rule3 = New-AzNetworkSecurityRuleConfig -Name 'WinRM HTTP' `
             -Description "Allow WinRM for PowerShell Remoting" `
             -Access Allow `
             -Protocol TCP `
@@ -161,6 +161,17 @@ function New-TestLabNSG {
             -SourcePortRange * `
             -DestinationAddressPrefix * `
             -DestinationPortRange 5985 
+
+            $rule4 = New-AzNetworkSecurityRuleConfig -Name 'HTTP' `
+            -Description "Allow HTTP for Exchange Server" `
+            -Access Allow `
+            -Protocol TCP `
+            -Direction Inbound `
+            -Priority 103 `
+            -SourceAddressPrefix $RemoteAddress `
+            -SourcePortRange * `
+            -DestinationAddressPrefix * `
+            -DestinationPortRange 80
 
             New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName `
             -Location $LocationName `
