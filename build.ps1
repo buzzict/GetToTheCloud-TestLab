@@ -7,8 +7,8 @@ Connect-AzAccount
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
 # Credentials
-$userName = "newuser"
-$password = ConvertTo-SecureString "Hello1234" -AsPlainText -Force
+$userName = "Labadmin"
+$password = ConvertTo-SecureString "Welkom01!!" -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential($userName, $password)
 
 # Import JSON configuration file 
