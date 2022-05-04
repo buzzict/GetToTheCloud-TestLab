@@ -1,0 +1,38 @@
+{
+    "resourceGroupName": "TestLab",
+    "locationName": "westeurope",
+    "machines": [
+        {
+            "vmName": "DC01",
+            "type": "DomainController",
+            "vmSize": "Standard_B2s",
+            "publisherName": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "skus": "2019-Datacenter-Core"
+        },
+        {
+            "vmName": "EXCH01",
+            "type": "ExchangeServer",
+            "vmSize": "Standard_B2s",
+            "publisherName": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "skus": "2019-datacenter-gensecond"
+        },
+        {
+            "vmName": "WIN11",
+            "type": "Client",
+            "vmSize": "Standard_B2s",
+            "publisherName": "MicrosoftWindowsServer",
+            "offer": "windows-11",
+            "skus": "win11-21h2-pron"
+        }
+    ],
+    "vnetName": "TestLab",
+    "vnetAddressPrefix": "10.10.0.0/24",
+    "subnets": [
+        {
+            "subnetName": "Subnet",
+            "subnetPrefix": "10.10.0.0/24"
+        }
+    ]   
+}
