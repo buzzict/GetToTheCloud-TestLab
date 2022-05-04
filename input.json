@@ -1,4 +1,10 @@
 {
+    "username": "LabAdmin",
+    "password": "Welkom01!!",
+    "domainname": "GetToTheCloud.local",
+    "domainrecovery": "R3C0verP@ssw0rd!",
+    "timezone": "W. Europe Standard Time",
+    
     "resourceGroupName": "TestLab",
     "locationName": "westeurope",
     "machines": [
@@ -8,12 +14,12 @@
             "vmSize": "Standard_B2s",
             "publisherName": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "skus": "2019-Datacenter-Core"
+            "skus": "2019-Datacenter-gensecond"
         },
         {
-            "vmName": "EXCH01",
+            "vmName": "EX01",
             "type": "ExchangeServer",
-            "vmSize": "Standard_B2s",
+            "vmSize": "Standard_B2ms",
             "publisherName": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
             "skus": "2019-datacenter-gensecond"
