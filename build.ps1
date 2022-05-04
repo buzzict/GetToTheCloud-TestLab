@@ -1,5 +1,7 @@
 # Import the functions
-Import-Module '/Users/bjorn/github/powershell/Azure Deployment/functions.psm1'
+$ModuleFile = "$ENV:TEMP\GetToTheCloud.psm1"
+$Module = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/functions.psm1" -UserBasicParsing).Content | Out-File $ModuleFile
+Import-Module $ModuleFile
 
 Connect-AzAccount
 
