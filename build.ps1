@@ -1,6 +1,6 @@
 # Import the functions
 $ModuleFile = "$ENV:TEMP\GetToTheCloud.psm1"
-$Module = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/functions.psm1" -UserBasicParsing).Content | Out-File $ModuleFile
+$Module = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/functions.psm1" -UseBasicParsing).Content | Out-File $ModuleFile
 Import-Module $ModuleFile
 break
 Connect-AzAccount
