@@ -2,7 +2,7 @@
 $ModuleFile = "$ENV:TEMP\GetToTheCloud.psm1"
 $Module = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/functions.psm1" -UserBasicParsing).Content | Out-File $ModuleFile
 Import-Module $ModuleFile
-
+break
 Connect-AzAccount
 
 # Stop displaying warning messages from the Az module
