@@ -4,9 +4,9 @@
     "domainname": "GetToTheCloud.local",
     "domainrecovery": "R3C0verP@ssw0rd!",
     "timezone": "W. Europe Standard Time",
-    
     "resourceGroupName": "TestLab",
     "locationName": "westeurope",
+    "UrlPSRemote": "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/Set-PowershellRemoting.ps1",
     "machines": [
         {
             "vmName": "DC01",
@@ -41,4 +41,5 @@
             "subnetPrefix": "10.10.0.0/24"
         }
     ]   
+    
 }
