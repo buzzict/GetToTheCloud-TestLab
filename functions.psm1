@@ -198,7 +198,6 @@ function New-TestLabNSG {
     }
 }
 
- 
 function Disable-InternetExplorerESC {
     $AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
     $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
@@ -219,7 +218,6 @@ function Disable-UserAccessControl {
     Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 00000000
     Write-Host "User Access Control (UAC) has been disabled." -ForegroundColor Green    
 }
-
 
 function Get-FTA {
   [CmdletBinding()]
@@ -440,7 +438,6 @@ function Remove-FTA {
   Update-Registry
   Write-Output "Removed: $ProgId" 
 }
-
 
 function Set-FTA {
 
