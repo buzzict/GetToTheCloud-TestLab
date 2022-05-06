@@ -103,7 +103,7 @@ foreach ($machine in $json.machines) {
             $script = 'Set-PowerShellRemoting.ps1'
 
             Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
-         }
+        }
         "Client" {  }
         Default {}
     }
@@ -114,18 +114,103 @@ foreach ($machine in $json.machines) {
     switch ($machine.type) {
         "DomainController" { 
             # Add a new script extension to the VM
-            $fileUri = $json.UrlPSRemote
-            $script = 'Set-PowerShellRemoting.ps1'
+            $VMName = $json.vmname
+            $Pip = $VMName + "PublicIP"
+            $fileUri = "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/01-DC-SetupDomainController.ps1"
+            $IP = (Get-AZPublicIPAddress -Name $Pip).IpAddress
+            
+            Write-Host "[INFO] Connecting to $($VMName) with IP $IP for installing Domain Controller"
+            Invoke-Command -Computername $IP -ScriptBlock {
+                Param ($fileuri)
+                $OutputFolder = "C:\Temp"
+                if (Test-Path -path $OutputFolder) {
+                    #do nothing
+                }
+                else {
+                    $Location = $OutputFolder.Split("\")
+                    New-Item -Path "$($Location[0])\" -Name $Location[1] -ItemType Directory
+                }
+            
+                $Script = (Invoke-WebRequest -Uri $fileUri -UseBasicParsing).Content
+                $Script | Out-File C:\Temp\script.ps1
+                powershell C:\temp\script.ps1
+                Remove-Item C:\Temp\script.ps1 -force
+            } -Credential $Credential -ArgumentList $fileUri
+            $FileUri = "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/03-DC-ConfigureActiveDirectory.ps1"
 
-            Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
+            Write-Host "[INFO] Connecting to $($VMName) with IP $IP for Creating Domain structure"
+            Invoke-Command -Computername $IP -ScriptBlock {
+                Param ($fileuri)
+                $OutputFolder = "C:\Temp"
+                if (Test-Path -path $OutputFolder) {
+                    #do nothing
+                }
+                else {
+                    $Location = $OutputFolder.Split("\")
+                    New-Item -Path "$($Location[0])\" -Name $Location[1] -ItemType Directory
+                }
+
+                $Script = (Invoke-WebRequest -Uri $fileUri -UseBasicParsing).Content
+                $Script | Out-File C:\Temp\script.ps1
+                powershell C:\temp\script.ps1
+                Remove-Item C:\Temp\script.ps1 -force
+            } -Credential $DomainCredential -ArgumentList $fileUri
         }
         "ExchangeServer" { 
             # Add a new script extension to the VM
-            $fileUri = $json.UrlPSRemote
-            $script = 'Set-PowerShellRemoting.ps1'
+            $VMName = $json.Vname
+            $Pip = $VMName + "PublicIP"
+            $fileUri = "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/02-EXC-DownloadExchange.ps1"
+            $IP = (Get-AZPublicIPAddress -Name $Pip).IpAddress
+            Write-Host "[INFO] Connecting to $($VMName) with IP $IP for downloading Exchange software"
+            
+            Invoke-Command -Computername $IP -ScriptBlock {
+                Param ($fileuri)
+                $OutputFolder = "C:\Temp"
+                if (Test-Path -path $OutputFolder) {
+                    #do nothing
+                }
+                else {
+                    $Location = $OutputFolder.Split("\")
+                    New-Item -Path "$($Location[0])\" -Name $Location[1] -ItemType Directory
+                }
+                $Script = (Invoke-WebRequest -Uri $fileUri -UseBasicParsing).Content
+                $Script | Out-File C:\Temp\script.ps1
+                powershell C:\temp\script.ps1
+                Remove-Item C:\Temp\script.ps1 -force
+                $Download = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/04-EXC-ConfigureExchange.ps1" -UseBasicParsing).Content
+                $Download | Out-File C:\ExchangeDownload\04-EXC-ConfigureExchange.ps1
+                $Download = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/Scripts/Replace-OAuthCertificate.ps1" -UseBasicParsing).Content
+                $Download | Out-File C:\ExchangeDownload\Replace-OAuthCertificate.ps1
+                $Download = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/Scripts/Run-HybridConfigWizard.ps1" -UseBasicParsing).Content
+                $Download | Out-File C:\ExchangeDownload\Run-HybridConfigWizard.ps1
+                $Download = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/Scripts/GetToTheCloudFunctions.psm1" -UseBasicParsing).Content
+                $Download | Out-File C:\ExchangeDownload\GetToTheCloudFunctions.psm1
+            } -Credential $Credential -ArgumentList $fileUri
 
-            Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
-         }
+            $fileUri = "https://raw.githubusercontent.com/GetToThe-Cloud/GetToTheCloud-Lab/main/011-EXC-NetworkSettings.ps1"
+            $EXIP = $IP
+            Write-Host "[INFO] Connecting to $($VMName) with IP $IP for setting Network Settings Exchange server"
+
+            Invoke-Command -Computername $IP -ScriptBlock {
+                Param ($fileuri)
+                $Script = ""
+                $OutputFolder = "C:\Temp"
+                if (Test-Path -path $OutputFolder) {
+                    #do nothing
+                }
+                else {
+                    $Location = $OutputFolder.Split("\")
+                    New-Item -Path "$($Location[0])\" -Name $Location[1] -ItemType Directory
+                }
+                $Script = (Invoke-WebRequest -Uri $fileUri -UseBasicParsing).Content
+                $Script | Out-File C:\Temp\script.ps1
+                powershell C:\temp\script.ps1
+                Remove-Item C:\Temp\script.ps1 -force
+            } -Credential $Credential -ArgumentList $fileUri
+            Write-Host "[INFO] Restarting $($Vmname) now"
+            Restart-AZVM -ResourceGroupName $ResourceGroupName -Name $VMName 
+        }
         "Client" {  }
         Default {}
     }
