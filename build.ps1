@@ -2,7 +2,7 @@
 $ModuleFile = "$ENV:TEMP\GetToTheCloud.psm1"
 $Module = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/functions.psm1" -UseBasicParsing).Content | Out-File $ModuleFile
 Import-Module $ModuleFile
-break
+
 Connect-AzAccount
 
 # Stop displaying warning messages from the Az module
@@ -14,14 +14,22 @@ $password = ConvertTo-SecureString "Welkom01!!" -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential($userName, $password)
 
 # Import JSON configuration file 
-$jsonPrompt = Read-Host -Prompt 'Enter the full file path of the configuration file'
+$jsonPrompt = Read-Host -Prompt 'Enter the URL of the configuration file'
 try {
-    $json = Get-Content $jsonPrompt | ConvertFrom-Json
+    $Json = Invoke-WebRequest $jsonPrompt -UseBasicParsing | ConvertFrom-Json
+    #$json = Get-Content $jsonPrompt | ConvertFrom-Json
 }
 catch {
     Write-Host "Configuration file could not be found. Please enter the correct full path"
     Exit
 }
+$username = $json.UserName
+$Cred = $json.Password | ConvertTo-SecureString -Force -AsPlainText
+$Credential = New-Object -TypeName PSCredential -ArgumentList ($Username, $Cred)
+$DomainName = $json.DomainName
+$Domain = $DomainName.Split(".")[0]
+$DomainUser = $domain + "\" + $Username
+$DomainCredential = New-Object -TypeName PSCredential -ArgumentList ($DomainUser, $Cred)
 
 # Get the public IP Address from where the script is run
 $remoteAddress = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
@@ -84,14 +92,36 @@ foreach ($machine in $json.machines) {
     switch ($machine.type) {
         "DomainController" { 
             # Add a new script extension to the VM
-            $fileUri = "https://storageaccountbpbjoac05.blob.core.windows.net/scripts/Set-PowerShellRemoting.ps1"
+            $fileUri = $json.UrlPSRemote
             $script = 'Set-PowerShellRemoting.ps1'
 
             Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
         }
         "ExchangeServer" { 
             # Add a new script extension to the VM
-            $fileUri = "https://storageaccountbpbjoac05.blob.core.windows.net/scripts/Set-PowerShellRemoting.ps1"
+            $fileUri = $json.UrlPSRemote
+            $script = 'Set-PowerShellRemoting.ps1'
+
+            Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
+         }
+        "Client" {  }
+        Default {}
+    }
+}
+
+foreach ($machine in $json.machines) {
+    # Based on the type of the virtual machine, execute a ps1 script via WINRM
+    switch ($machine.type) {
+        "DomainController" { 
+            # Add a new script extension to the VM
+            $fileUri = $json.UrlPSRemote
+            $script = 'Set-PowerShellRemoting.ps1'
+
+            Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
+        }
+        "ExchangeServer" { 
+            # Add a new script extension to the VM
+            $fileUri = $json.UrlPSRemote
             $script = 'Set-PowerShellRemoting.ps1'
 
             Add-ScriptExtension -FileUri $fileUri -Script $script -ResourceGroupName $json.resourceGroupName -VMName $machine.vmName -LocationName $json.locationName
