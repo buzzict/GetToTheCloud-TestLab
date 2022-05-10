@@ -5,6 +5,17 @@ Import-Module $ModuleFile
 
 Connect-AzAccount
 
+# checking azure location close by and if eligible
+## current connection
+$regions = Get-AZLocation
+$locations = $regions | Select-Object displayName,latitude,longitude | Sort-Object displayName
+
+$request = (Invoke-WebRequest -Uri  http://ipapi.co/json).Content | ConvertFrom-Json
+$latitude = $request.lat
+$longitude = $request.lon
+
+
+
 # Stop displaying warning messages from the Az module
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
