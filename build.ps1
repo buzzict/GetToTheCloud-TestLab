@@ -5,16 +5,31 @@ Import-Module $ModuleFile
 
 Connect-AzAccount
 
+# Get the public IP Address from where the script is run
+$remoteAddress = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
+
 # checking azure location close by and if eligible
 ## current connection
+
 $regions = Get-AZLocation
 $locations = $regions | Select-Object displayName,latitude,longitude | Sort-Object displayName
 
-$request = (Invoke-WebRequest -Uri  http://ipapi.co/json).Content | ConvertFrom-Json
+$request = (Invoke-WebRequest -Uri  https://ipapi.co/$remoteAddress/json).Content | ConvertFrom-Json
 $latitude = $request.lat
 $longitude = $request.lon
 
+$locations = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/locations.json" -UseBasicParsing).Content | ConvertFrom-Json
 
+$hash = [ordered]@{
+    latitude="$latitude";
+    longitude="$longitude";
+    locations=@($locations)
+}
+
+$body = $hash | ConvertTo-Json -Depth 100
+
+$uri = 'https://azureregion.azurewebsites.net/api/nearestRegionFromIp'
+Invoke-RestMethod -Method Put -Uri $uri -Body $body
 
 # Stop displaying warning messages from the Az module
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
@@ -42,8 +57,7 @@ $Domain = $DomainName.Split(".")[0]
 $DomainUser = $domain + "\" + $Username
 $DomainCredential = New-Object -TypeName PSCredential -ArgumentList ($DomainUser, $Cred)
 
-# Get the public IP Address from where the script is run
-$remoteAddress = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
+
 
 # Check if the resource group is already present. If not, create a new resource group.
 try {
