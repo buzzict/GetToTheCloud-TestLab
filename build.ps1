@@ -39,8 +39,8 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 # Import JSON configuration file 
 $jsonPrompt = Read-Host -Prompt 'Enter the URL of the configuration file'
 try {
-    $Json = Invoke-WebRequest $jsonPrompt -UseBasicParsing | ConvertFrom-Json
-    #$json = Get-Content $jsonPrompt | ConvertFrom-Json
+    $Json = Invoke-WebRequest $jsonPrompt -UseBasicParsing |Out-file "$ENV:TEMP\input.json"
+    $json = Get-Content "$ENV:TEMP\input.json" | ConvertFrom-Json
 }
 catch {
     Write-Host "Configuration file could not be found. Please enter the correct full path"
