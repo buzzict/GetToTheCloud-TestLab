@@ -11,33 +11,30 @@ $remoteAddress = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 # checking azure location close by and if eligible
 ## current connection
 
-$regions = Get-AZLocation
-$locations = $regions | Select-Object displayName,latitude,longitude | Sort-Object displayName
+# $regions = Get-AZLocation
+# $locations = $regions | Select-Object displayName,latitude,longitude | Sort-Object displayName
 
-$request = (Invoke-WebRequest -Uri  https://ipapi.co/$remoteAddress/json).Content | ConvertFrom-Json
-$latitude = $request.lat
-$longitude = $request.lon
+# $request = (Invoke-WebRequest -Uri  https://ipapi.co/$remoteAddress/json).Content | ConvertFrom-Json
+# $latitude = $request.lat
+# $longitude = $request.lon
 
-$locations = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/locations.json" -UseBasicParsing).Content | ConvertFrom-Json
+# $locations = (Invoke-WebRequest -uri "https://raw.githubusercontent.com/buzzict/GetToTheCloud-TestLab/main/locations.json" -UseBasicParsing).Content | ConvertFrom-Json
 
-$hash = [ordered]@{
-    latitude="$latitude";
-    longitude="$longitude";
-    locations=@($locations)
-}
+# $hash = [ordered]@{
+#     latitude="$latitude";
+#     longitude="$longitude";
+#     locations=@($locations)
+# }
 
-$body = $hash | ConvertTo-Json -Depth 100
+# $body = $hash | ConvertTo-Json -Depth 100
 
-$uri = 'https://azureregion.azurewebsites.net/api/nearestRegionFromIp'
-Invoke-RestMethod -Method Put -Uri $uri -Body $body
+# $uri = 'https://azureregion.azurewebsites.net/api/nearestRegionFromIp'
+# Invoke-RestMethod -Method Put -Uri $uri -Body $body
 
 # Stop displaying warning messages from the Az module
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
-# Credentials
-$userName = "Labadmin"
-$password = ConvertTo-SecureString "Welkom01!!" -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($userName, $password)
+
 
 # Import JSON configuration file 
 $jsonPrompt = Read-Host -Prompt 'Enter the URL of the configuration file'
@@ -49,6 +46,7 @@ catch {
     Write-Host "Configuration file could not be found. Please enter the correct full path"
     Exit
 }
+
 $username = $json.UserName
 $Cred = $json.Password | ConvertTo-SecureString -Force -AsPlainText
 $Credential = New-Object -TypeName PSCredential -ArgumentList ($Username, $Cred)
