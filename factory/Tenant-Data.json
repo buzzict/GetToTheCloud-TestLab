@@ -1,0 +1,9 @@
+{
+	"name": "Tenant-Data",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2072503f-b490-4aee-9192-44501d2d236b",
+		"tenantId": "d8dc7750-6cbc-4672-a3ab-82e90c401d46"
+	}
+}
