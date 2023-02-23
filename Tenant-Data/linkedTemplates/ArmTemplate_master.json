@@ -1,0 +1,98 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Tenant-Data"
+		},
+		"FileServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'FileServer1'"
+		},
+		"Graph API REST_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'Graph API REST'"
+		},
+		"FileServer1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\tenantassessment.file.core.windows.net"
+		},
+		"FileServer1_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "localhost\\tenantassessment"
+		},
+		"Graph API REST_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://graph.microsoft.com/"
+		},
+		"Graph API REST_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "09eab9e2-4fea-4393-8adc-85a3802a53d5"
+		},
+		"Graph API REST_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "d8dc7750-6cbc-4672-a3ab-82e90c401d46"
+		},
+		"Graph API REST_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://graph.microsoft.com"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "Tenant-Data_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"FileServer1_password": {
+						"value": "[parameters('FileServer1_password')]"
+					},
+					"Graph API REST_servicePrincipalKey": {
+						"value": "[parameters('Graph API REST_servicePrincipalKey')]"
+					},
+					"FileServer1_properties_typeProperties_host": {
+						"value": "[parameters('FileServer1_properties_typeProperties_host')]"
+					},
+					"FileServer1_properties_typeProperties_userId": {
+						"value": "[parameters('FileServer1_properties_typeProperties_userId')]"
+					},
+					"Graph API REST_properties_typeProperties_url": {
+						"value": "[parameters('Graph API REST_properties_typeProperties_url')]"
+					},
+					"Graph API REST_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('Graph API REST_properties_typeProperties_servicePrincipalId')]"
+					},
+					"Graph API REST_properties_typeProperties_tenant": {
+						"value": "[parameters('Graph API REST_properties_typeProperties_tenant')]"
+					},
+					"Graph API REST_properties_typeProperties_aadResourceId": {
+						"value": "[parameters('Graph API REST_properties_typeProperties_aadResourceId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Tenant-Data"
+		},
+		"FileServer1_password": {
+			"value": ""
+		},
+		"Graph API REST_servicePrincipalKey": {
+			"value": ""
+		},
+		"FileServer1_properties_typeProperties_host": {
+			"value": "\\\\tenantassessment.file.core.windows.net"
+		},
+		"FileServer1_properties_typeProperties_userId": {
+			"value": "localhost\\tenantassessment"
+		},
+		"Graph API REST_properties_typeProperties_url": {
+			"value": "https://graph.microsoft.com/"
+		},
+		"Graph API REST_properties_typeProperties_servicePrincipalId": {
+			"value": "09eab9e2-4fea-4393-8adc-85a3802a53d5"
+		},
+		"Graph API REST_properties_typeProperties_tenant": {
+			"value": "d8dc7750-6cbc-4672-a3ab-82e90c401d46"
+		},
+		"Graph API REST_properties_typeProperties_aadResourceId": {
+			"value": "https://graph.microsoft.com"
+		}
+	}
+}
